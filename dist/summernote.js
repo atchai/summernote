@@ -1,12 +1,12 @@
 /**
- * Super simple wysiwyg editor v0.7.1
+ * Super simple wysiwyg editor v0.7.2
  * http://summernote.org/
  *
  * summernote.js
  * Copyright 2013-2015 Alan Hong. and other contributors
  * summernote may be freely distributed under the MIT license./
  *
- * Date: 2016-01-01T15:51Z
+ * Date: 2016-01-07T10:37Z
  */
 (function (factory) {
   /* global define */
@@ -4382,21 +4382,20 @@
     });
 
     /**
+     * returns whether editable area has focus or not.
+     */
+    this.hasFocus = function () {
+      return $editable.is(':focus');
+    };
+
+    /**
      * set focus
      */
     this.focus = function () {
       // [workaround] Screen will move when page is scolled in IE.
       //  - do focus when not focused
-      if (!$editable.is(':focus')) {
+      if (!this.hasFocus()) {
         $editable.focus();
-
-        // [workaround] for firefox bug http://goo.gl/lVfAaI
-        if (!$editable.is(':focus') && agent.isFF) {
-          range.createFromNode($editable[0])
-               .normalize()
-               .collapse()
-               .select();
-        }
       }
     };
 
@@ -5884,6 +5883,12 @@
     };
 
     this.update = function () {
+      // Prevent focusing on editable when invoke('code') is executed
+      if (!context.invoke('editor.hasFocus')) {
+        this.hide();
+        return;
+      }
+
       var rng = context.invoke('editor.createRange');
       if (rng.isCollapsed() && rng.isOnAnchor()) {
         var anchor = dom.ancestor(rng.sc, dom.isAnchor);
@@ -6280,7 +6285,7 @@
 
       var body = [
         '<p class="text-center">',
-        '<a href="//summernote.org/" target="_blank">Summernote 0.7.1</a> · ',
+        '<a href="//summernote.org/" target="_blank">Summernote 0.7.2</a> · ',
         '<a href="//github.com/summernote/summernote" target="_blank">Project</a> · ',
         '<a href="//github.com/summernote/summernote/issues" target="_blank">Issues</a>',
         '</p>'
@@ -6602,7 +6607,7 @@
 
 
   $.summernote = $.extend($.summernote, {
-    version: '0.7.1',
+    version: '0.7.2',
     ui: ui,
 
     plugins: {},
